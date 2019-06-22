@@ -18,6 +18,9 @@ public class PPGLSurfaceView extends GLSurfaceView {
 
     public PPGLSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setRenderer(new PPGLRenderer());
+        //设置egl版本
+        setEGLContextClientVersion(2);
+        //设置 渲染回调
+        setRenderer(new PPGLRenderer(context));
     }
 }
