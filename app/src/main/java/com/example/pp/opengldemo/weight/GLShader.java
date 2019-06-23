@@ -77,6 +77,13 @@ public class GLShader {
         createShaderBuffer();
         // 创建文理
         createTexture();
+        setupTexture();
+    }
+
+    private void setupTexture() {
+        for (int i = 0; i < TEXTURE_COUNT; i++) {
+            setupTexture(textureIDs[i], vbos[i]);
+        }
     }
 
     private void createShaderBuffer() {
@@ -96,8 +103,17 @@ public class GLShader {
         }
     }
 
+    private void setupTextureSize(int textureId, int vboID, int width, int height, int internalformat) {
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vboID);
+        // 设置文理格式和大小
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, internalformat, width, height, 0, internalformat, GLES20.GL_UNSIGNED_BYTE, null);
+        // 当前文理设置完属性后,解绑文理
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
+    }
 
-    private void setupTexture(int textureId, int vboID, Bitmap bitmap) {
+    private void setupTexture(int textureId, int vboID) {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vboID);
         // 使 顶点变量有效
@@ -107,8 +123,6 @@ public class GLShader {
         // 加入纹理坐标数据
         GLES20.glEnableVertexAttribArray(f_Position);
         GLES20.glVertexAttribPointer(f_Position, 2, GLES20.GL_FLOAT, false, 8, vertexData.length * 4);
-        // 设置文理格式和大小
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
         // 当前文理设置完属性后,解绑文理
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
@@ -183,8 +197,9 @@ public class GLShader {
         clearColor();
         if (null != bitmap) {
             if (lastPictureWidth != bitmap.getWidth() || lastPictureHeight != bitmap.getHeight()) {
+                int internalFormat = GLUtils.getInternalFormat(bitmap);
                 for (int i = 0; i < TEXTURE_COUNT; i++) {
-                    setupTexture(textureIDs[i], vbos[i], bitmap);
+                    setupTextureSize(textureIDs[i], vbos[i], bitmap.getWidth(), bitmap.getHeight(), internalFormat);
                 }
             }
         }
@@ -209,7 +224,7 @@ public class GLShader {
         GLUtils.texSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, bitmap);
         // 更新渲染数据
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
     }
 
     public void viewPort(int x, int y, int width, int height) {
