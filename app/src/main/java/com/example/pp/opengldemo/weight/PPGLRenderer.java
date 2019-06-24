@@ -3,12 +3,10 @@ package com.example.pp.opengldemo.weight;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.opengl.GLUtils;
-import android.util.Log;
 
 import com.example.pp.opengldemo.R;
+import com.example.pp.opengldemo.opengl.GLTexteure;
 import com.example.pp.opengldemo.util.StreamUtil;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -26,11 +24,14 @@ public class PPGLRenderer implements GLSurfaceView.Renderer {
 
     private final Bitmap bitmap;
     private final GLTexteure glTexteure;
+    private final Bitmap bitmap2;
+    private int drawCount;
 
     public PPGLRenderer(Context context) {
         this.mContext = context;
         glTexteure = new GLTexteure();
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
+        bitmap2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.androids);
     }
 
     @Override
@@ -48,8 +49,16 @@ public class PPGLRenderer implements GLSurfaceView.Renderer {
         glTexteure.viewPort(0, 0, width, height);
     }
 
+    int top = 100;
+
     @Override
     public void onDrawFrame(GL10 gl) {
-        glTexteure.draw(bitmap);
+        if (drawCount < top) {
+            glTexteure.draw(bitmap2);
+        } else {
+            glTexteure.draw(bitmap);
+        }
+        drawCount++;
+        drawCount = drawCount > top * 2 ? 0 : drawCount;
     }
 }

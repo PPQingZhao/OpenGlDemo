@@ -1,6 +1,5 @@
-package com.example.pp.opengldemo.weight;
+package com.example.pp.opengldemo.opengl;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 
 /**
