@@ -10,6 +10,12 @@ public class GLProgram {
     private int f_Position;
     private int sTexture;
 
+    public int getuMatrix() {
+        return uMatrix;
+    }
+
+    private int uMatrix;
+
     public int getProgram() {
         return program;
     }
@@ -42,6 +48,7 @@ public class GLProgram {
         v_position = GLES20.glGetAttribLocation(program, "v_Position");
         f_Position = GLES20.glGetAttribLocation(program, "f_Position");
         sTexture = GLES20.glGetUniformLocation(program, "sTexture");
+        uMatrix = GLES20.glGetUniformLocation(program, "u_Matrix");
     }
 
     private int loadShader(int shaderType, String shaderSource) {

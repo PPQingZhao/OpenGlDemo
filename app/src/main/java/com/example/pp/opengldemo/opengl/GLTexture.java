@@ -3,11 +3,13 @@ package com.example.pp.opengldemo.opengl;
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
+import android.opengl.Matrix;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 /**
  * @author pp
@@ -37,6 +39,13 @@ public class GLTexture {
             0f, 1f,
             1f, 1f
     };
+
+    private final float[] matrix = {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+    };
     private static final int TEXTURE_COUNT = 1;
 
     private FloatBuffer vertexBuffer;
@@ -55,6 +64,7 @@ public class GLTexture {
     private int windowWidth;
 
     private final GLProgram glProgram;
+
 
     public GLTexture() {
         // 分配内存
@@ -84,7 +94,7 @@ public class GLTexture {
             Log.e("TAG", "GLShader creatProgram failes!");
             return;
         }
-        // 创建定点缓冲区 vbo
+        // 创建顶点缓冲区 vbo
         createShaderBuffer();
         // 创建文理
         createTexture();
@@ -207,6 +217,7 @@ public class GLTexture {
             if (lastPictureWidth != bitmap.getWidth() || lastPictureHeight != bitmap.getHeight()) {
                 int internalFormat = GLUtils.getInternalFormat(bitmap);
                 for (int i = 0; i < TEXTURE_COUNT; i++) {
+                    setupMatrix(windowWidth, windowHeight, bitmap.getWidth(), bitmap.getHeight());
                     //　设置窗口
                     setupTextureSize(fbos[i], textureIDs[i], windowWidth, windowHeight, internalFormat);
                     //　设置fbo渲染纹理大小
@@ -219,7 +230,7 @@ public class GLTexture {
             }
         }
         for (int i = 0; i < TEXTURE_COUNT; i++) {
-            setupTexture(glProgram, vbos[i], 0, vertexData.length * 4 + fragmentData.length*4);
+            setupTexture(glProgram, vbos[i], 0, vertexData.length * 4 + fragmentData.length * 4);
             glFBODraw(i, bitmap);
             setupTexture(glProgram, vbos[i], 0, vertexData.length * 4);
             glWindowDraw(i);
@@ -229,10 +240,24 @@ public class GLTexture {
         lastPictureHeight = bitmap.getWidth();
     }
 
+    private void setupMatrix(int windowWidth, int windowHeight, int pictureWidth, int pictureHeight) {
+        float aspectRatio;
+        if (windowWidth > windowHeight) {
+            aspectRatio = (float) windowWidth / ((float) windowHeight / (float) pictureHeight * (float) pictureWidth);
+            Matrix.orthoM(matrix, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f);
+        } else {
+            aspectRatio = (float) windowHeight / ((float) windowWidth / (float) pictureWidth * (float) pictureHeight);
+            Matrix.orthoM(matrix, 0, -1f, 1f, -aspectRatio, aspectRatio, -1f, 1f);
+        }
+        Log.e("TAG", "matrix: " + Arrays.toString(matrix));
+
+        GLES20.glUniformMatrix4fv(glProgram.getuMatrix(), 1, false, matrix, 0);
+    }
+
     public void clearColor() {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         //颜色清屏 我们会在屏幕上看到这种颜色
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        GLES20.glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     }
 
     private void glFBODraw(int index, Bitmap bitmap) {
@@ -242,7 +267,8 @@ public class GLTexture {
         // 激活第index层文理
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + index);
         // 更新渲染数据 替换文理内容
-        GLUtils.texSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, bitmap);
+//        GLUtils.texSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, bitmap);
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D,0,bitmap,0);
         // 更新渲染数据
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
@@ -273,7 +299,7 @@ public class GLTexture {
     }
 
     public void viewPort(int x, int y, int width, int height) {
-        GLES20.glViewport(0, 0, width, height);
+        GLES20.glViewport(x, y, width, height);
         windowWidth = width;
         windowHeight = height;
     }
