@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
 
 import com.example.pp.opengldemo.R;
-import com.example.pp.opengldemo.opengl.GLTexteure;
+import com.example.pp.opengldemo.opengl.GLTexture;
 import com.example.pp.opengldemo.util.StreamUtil;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -23,13 +23,13 @@ public class PPGLRenderer implements GLSurfaceView.Renderer {
     private final Context mContext;
 
     private final Bitmap bitmap;
-    private final GLTexteure glTexteure;
+    private final GLTexture glTexteure;
     private final Bitmap bitmap2;
     private int drawCount;
 
     public PPGLRenderer(Context context) {
         this.mContext = context;
-        glTexteure = new GLTexteure();
+        glTexteure = new GLTexture();
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
         bitmap2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.androids);
     }
@@ -49,16 +49,16 @@ public class PPGLRenderer implements GLSurfaceView.Renderer {
         glTexteure.viewPort(0, 0, width, height);
     }
 
-    int top = 100;
+    int drawFan = 100;
 
     @Override
     public void onDrawFrame(GL10 gl) {
-        if (drawCount < top) {
+        if (drawCount < drawFan) {
             glTexteure.draw(bitmap2);
         } else {
             glTexteure.draw(bitmap);
         }
         drawCount++;
-        drawCount = drawCount > top * 2 ? 0 : drawCount;
+        drawCount = drawCount > drawFan * 2 ? 0 : drawCount;
     }
 }

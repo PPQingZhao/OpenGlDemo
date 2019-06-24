@@ -16,7 +16,7 @@ import java.nio.FloatBuffer;
  * @doc ${TODO}
  */
 
-public class GLShader {
+public class GLTexture {
     public static final int ERROR_INT = -1;
     static final float[] vertexData = {
             -1f, -1f,
@@ -56,7 +56,7 @@ public class GLShader {
 
     private final GLProgram glProgram;
 
-    public GLShader() {
+    public GLTexture() {
         // 分配内存
         vertexBuffer = ByteBuffer.allocateDirect(vertexData.length * 4)
                 .order(ByteOrder.nativeOrder())
