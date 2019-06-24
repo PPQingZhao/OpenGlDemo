@@ -9,7 +9,6 @@ import android.util.Log;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.Arrays;
 
 /**
  * @author pp
@@ -40,11 +39,12 @@ public class GLTexture {
             1f, 1f
     };
 
-    private final float[] matrix = {
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1
+    private final float[] matrix = new float[16];
+    float[] windowMatrix = {
+            1f,0f,0f,0f,
+            0f,1f,0f,0f,
+            0f,0f,1f,0f,
+            0f,0f,0f,1f
     };
     private static final int TEXTURE_COUNT = 1;
 
@@ -86,6 +86,7 @@ public class GLTexture {
                 .put(fboFragmentData);
         fboFragmentBuffer.position(0);
         glProgram = new GLProgram();
+
     }
 
     public void init(String codeVertex, String codeFragment) {
@@ -172,7 +173,6 @@ public class GLTexture {
             Log.e("TAG", "setTexture() program is null!");
             return;
         }
-
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vboID);
         // 使 顶点变量有效
         GLES20.glEnableVertexAttribArray(program.getV_position());
@@ -231,9 +231,11 @@ public class GLTexture {
         }
         for (int i = 0; i < TEXTURE_COUNT; i++) {
             setupTexture(glProgram, vbos[i], 0, vertexData.length * 4 + fragmentData.length * 4);
+//            setupTexture(glProgram, vbos[i], 0, vertexData.length * 4);
             glFBODraw(i, bitmap);
             setupTexture(glProgram, vbos[i], 0, vertexData.length * 4);
             glWindowDraw(i);
+//            glDraw(i,bitmap);
         }
 
         lastPictureWidth = bitmap.getWidth();
@@ -242,16 +244,13 @@ public class GLTexture {
 
     private void setupMatrix(int windowWidth, int windowHeight, int pictureWidth, int pictureHeight) {
         float aspectRatio;
-        if (windowWidth > windowHeight) {
-            aspectRatio = (float) windowWidth / ((float) windowHeight / (float) pictureHeight * (float) pictureWidth);
-            Matrix.orthoM(matrix, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f);
-        } else {
-            aspectRatio = (float) windowHeight / ((float) windowWidth / (float) pictureWidth * (float) pictureHeight);
+        if (pictureWidth / (float) pictureHeight > windowWidth / (float) windowHeight) {
+            aspectRatio = (float) windowHeight / ((windowWidth / (float) pictureWidth) * pictureHeight);
             Matrix.orthoM(matrix, 0, -1f, 1f, -aspectRatio, aspectRatio, -1f, 1f);
+        } else {
+            aspectRatio = (float) windowWidth / ((windowHeight / (float) pictureHeight)*pictureWidth);
+            Matrix.orthoM(matrix, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f);
         }
-        Log.e("TAG", "matrix: " + Arrays.toString(matrix));
-
-        GLES20.glUniformMatrix4fv(glProgram.getuMatrix(), 1, false, matrix, 0);
     }
 
     public void clearColor() {
@@ -262,13 +261,14 @@ public class GLTexture {
 
     private void glFBODraw(int index, Bitmap bitmap) {
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbos[index]);
+//        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         // 绑定第index层文理
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, imageTextureIDs[index]);
         // 激活第index层文理
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + index);
         // 更新渲染数据 替换文理内容
-//        GLUtils.texSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, bitmap);
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D,0,bitmap,0);
+        GLUtils.texSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, bitmap);
+        GLES20.glUniformMatrix4fv(glProgram.getuMatrix(), 1, false, matrix, 0);
         // 更新渲染数据
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
@@ -280,6 +280,7 @@ public class GLTexture {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureIDs[index]);
         // 激活第一层文理
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + index);
+        GLES20.glUniformMatrix4fv(glProgram.getuMatrix(), 1, false, windowMatrix, 0);
         // 更新渲染数据 替换文理内容
         // 更新渲染数据
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);

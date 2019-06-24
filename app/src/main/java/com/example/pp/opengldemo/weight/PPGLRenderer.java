@@ -36,6 +36,7 @@ public class PPGLRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+//        String codeVertex = StreamUtil.streamToSrting(mContext.getResources().openRawResource(R.raw.shader_vertx));
         String codeVertex = StreamUtil.streamToSrting(mContext.getResources().openRawResource(R.raw.shader_vertx_m));
         String codeFragment = StreamUtil.streamToSrting(mContext.getResources().openRawResource(R.raw.shader_fragment));
         // 创建渲染程序
@@ -55,7 +56,7 @@ public class PPGLRenderer implements GLSurfaceView.Renderer {
         if (drawCount < drawFan) {
             glTexteure.draw(bitmap2);
         } else {
-            glTexteure.draw(bitmap);
+            glTexteure.draw(bitmap2);
         }
         drawCount++;
         drawCount = drawCount > drawFan * 2 ? 0 : drawCount;
