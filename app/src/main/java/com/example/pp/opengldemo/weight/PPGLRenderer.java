@@ -38,9 +38,10 @@ public class PPGLRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 //        String codeVertex = StreamUtil.streamToSrting(mContext.getResources().openRawResource(R.raw.shader_vertx));
         String codeVertex = StreamUtil.streamToSrting(mContext.getResources().openRawResource(R.raw.shader_vertx_m));
+        String codeVertex1 = StreamUtil.streamToSrting(mContext.getResources().openRawResource(R.raw.shader_vertx));
         String codeFragment = StreamUtil.streamToSrting(mContext.getResources().openRawResource(R.raw.shader_fragment));
         // 创建渲染程序
-        glTexteure.init(codeVertex, codeFragment);
+        glTexteure.init(codeVertex, codeFragment,codeVertex1,codeFragment);
     }
 
     @Override
