@@ -33,10 +33,14 @@ public class GLTexture {
     };
 
     static final float[] fboFragmentData = {
-            0f, 0f,
-            1f, 0f,
+//            0f, 0f,
+//            1f, 0f,
+//            0f, 1f,
+//            1f, 1f
             0f, 1f,
-            1f, 1f
+            1f, 1f,
+            0f, 0f,
+            1f, 0f
     };
 
     private final float[] matrix = new float[16];
@@ -254,6 +258,8 @@ public class GLTexture {
             aspectRatio = (float) windowWidth / ((windowHeight / (float) pictureHeight) * pictureWidth);
             Matrix.orthoM(matrix, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f);
         }
+        //　旋转  绕　X轴旋转180度
+        Matrix.rotateM(matrix, 0, 180, 1, 0, 0);
     }
 
     public void clearColor() {
