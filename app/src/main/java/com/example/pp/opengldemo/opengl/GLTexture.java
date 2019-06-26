@@ -90,6 +90,7 @@ public class GLTexture {
                 .asFloatBuffer()
                 .put(fboFragmentData);
         fboFragmentBuffer.position(0);
+
         glProgram = new GLProgram();
         windowProgram = new GLProgram();
 
