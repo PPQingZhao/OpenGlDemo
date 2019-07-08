@@ -209,5 +209,5 @@ public abstract class BaseTexture {
         }
     }
 
-    public abstract int[] drawTexture(Bitmap bitmap);
+    public abstract int[] drawTexture(Bitmap[] bitmap);
 }

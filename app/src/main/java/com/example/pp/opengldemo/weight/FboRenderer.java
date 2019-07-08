@@ -67,9 +67,9 @@ public class FboRenderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
         int[] ints;
         if (drawCount < drawFan) {
-            ints = fboTexture.drawTexture(bitmap2);
+            ints = fboTexture.drawTexture(new Bitmap[]{bitmap});
         } else {
-            ints = fboTexture.drawTexture(bitmap);
+            ints = fboTexture.drawTexture(new Bitmap[]{bitmap2});
         }
 
         glTexture1.glTextureDraw(ints, new float[]{

@@ -43,12 +43,12 @@ public class FBOTexture extends BaseTexture {
     }
 
     @Override
-    public int[] drawTexture(Bitmap bitmap) {
+    public int[] drawTexture(Bitmap[] bitmapArr) {
         if (GLProgram.ERROR_INT == mGLProgram.getProgram()) {
             Log.e("TAG", "useProgram program is null!");
             return new int[0];
         }
-        if (null != bitmap) {
+        /*if (null != bitmap) {
             if (lastPictureWidth != bitmap.getWidth() || lastPictureHeight != bitmap.getHeight()) {
                 // 设置变换矩阵
                 setupMatrix(matrix, windowWidth, windowHeight, bitmap.getWidth(), bitmap.getHeight());
@@ -65,16 +65,34 @@ public class FBOTexture extends BaseTexture {
                     }
                 }
             }
-        }
+        }*/
 
-        for (int i = 0; i < TEXTURE_COUNT; i++) {
-            clearColor();
-            setupVertexAttribPointer(vbo[i]);
-            glFBODraw(texture[i], i, matrix, bitmap);
-        }
 
-        lastPictureWidth = bitmap.getWidth();
-        lastPictureHeight = bitmap.getWidth();
+        for (int i = 0; i < bitmapArr.length; i++) {
+            Bitmap bitmap = bitmapArr[i];
+            if (null != bitmap) {
+                if (lastPictureWidth != bitmap.getWidth() || lastPictureHeight != bitmap.getHeight()) {
+                    // 设置变换矩阵
+                    setupMatrix(matrix, windowWidth, windowHeight, bitmap.getWidth(), bitmap.getHeight());
+                    int internalFormat = GLUtils.getInternalFormat(bitmap);
+                    //　设置fbo渲染纹理大小
+                    setupTextureSize(0, texture[0], bitmap.getWidth(), bitmap.getHeight(), internalFormat);
+                    //　设置fbo窗口
+                    setupTextureSize(fbos[0], getFboTextureId()[0], windowWidth, windowHeight, internalFormat);
+                    int result = setupFBO(fbos[0], getFboTextureId()[0], vbo[0]);
+                    if (result == ERROR_INT) {
+                        Log.e("TAG", "setupFBO failed!!!");
+                        return getFboTextureId();
+                    }
+                }
+
+//                clearColor();
+                setupVertexAttribPointer(vbo[0]);
+                glFBODraw(texture[0], 0, matrix, bitmap);
+                lastPictureWidth = bitmap.getWidth();
+                lastPictureHeight = bitmap.getWidth();
+            }
+        }
         return getFboTextureId();
     }
 

@@ -9,31 +9,34 @@ import android.util.Log;
 public class GLTexture extends BaseTexture {
 
     @Override
-    public int[] drawTexture(Bitmap bitmap) {
+    public int[] drawTexture(Bitmap[] bitmapArr) {
         if (GLProgram.ERROR_INT == mGLProgram.getProgram()) {
             Log.e("TAG", "useProgram program is null!");
             return new int[0];
         }
-        if (null != bitmap) {
-            if (lastPictureWidth != bitmap.getWidth() || lastPictureHeight != bitmap.getHeight()) {
-                // 设置变换矩阵
-                setupMatrix(matrix, windowWidth, windowHeight, bitmap.getWidth(), bitmap.getHeight());
-                int internalFormat = GLUtils.getInternalFormat(bitmap);
-                for (int i = 0; i < texture.length; i++) {
+
+        for (int i = 0; i < TEXTURE_COUNT; i++) {
+            if (i >= bitmapArr.length) break;
+            Bitmap bitmap = bitmapArr[i];
+
+            if (null != bitmap) {
+                if (lastPictureWidth != bitmap.getWidth() || lastPictureHeight != bitmap.getHeight()) {
+                    // 设置变换矩阵
+                    setupMatrix(matrix, windowWidth, windowHeight, bitmap.getWidth(), bitmap.getHeight());
+                    int internalFormat = GLUtils.getInternalFormat(bitmap);
                     //　设置窗口
                     setupTextureSize(0, texture[i], bitmap.getWidth(), bitmap.getHeight(), internalFormat);
                 }
+
+                clearColor();
+                setupVertexAttribPointer(vbo[i]);
+                glDraw(texture[i], i, matrix, bitmap);
+
+                lastPictureWidth = bitmap.getWidth();
+                lastPictureHeight = bitmap.getWidth();
             }
         }
 
-        for (int i = 0; i < TEXTURE_COUNT; i++) {
-            clearColor();
-            setupVertexAttribPointer(vbo[i]);
-            glDraw(texture[i], i, matrix, bitmap);
-        }
-
-        lastPictureWidth = bitmap.getWidth();
-        lastPictureHeight = bitmap.getWidth();
         return texture;
     }
 
@@ -44,7 +47,7 @@ public class GLTexture extends BaseTexture {
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + index);
         // 更新渲染数据 替换文理内容
         GLUtils.texSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, bitmap);
-        GLES20.glUniformMatrix4fv(mGLProgram.getuMatrix(), 1, false, this.matrix, 0);
+        GLES20.glUniformMatrix4fv(mGLProgram.getuMatrix(), 1, false, matrix, 0);
         // 更新渲染数据
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
