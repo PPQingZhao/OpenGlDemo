@@ -112,6 +112,10 @@ public class GLTexture {
         createFBO();
     }
 
+    public int[] getTextureIDs() {
+        return textureIDs;
+    }
+
     private void createImageTexture() {
         // 创建纹理材质
         GLES20.glGenTextures(imageTextureIDs.length, imageTextureIDs, 0);
@@ -224,8 +228,8 @@ public class GLTexture {
         if (null != bitmap) {
             if (lastPictureWidth != bitmap.getWidth() || lastPictureHeight != bitmap.getHeight()) {
                 int internalFormat = GLUtils.getInternalFormat(bitmap);
+                setupMatrix(windowWidth, windowHeight, bitmap.getWidth(), bitmap.getHeight());
                 for (int i = 0; i < TEXTURE_COUNT; i++) {
-                    setupMatrix(windowWidth, windowHeight, bitmap.getWidth(), bitmap.getHeight());
                     //　设置窗口
                     setupTextureSize(fbos[i], textureIDs[i], windowWidth, windowHeight, internalFormat);
                     //　设置fbo渲染纹理大小
@@ -243,7 +247,7 @@ public class GLTexture {
             glFBODraw(i, bitmap);
             setupTexture(windowProgram, vbos[i], 0, vertexData.length * 4);
             glWindowDraw(i);
-//            glDraw(i,bitmap);
+//            glFBODraw(i,bitmap);
         }
 
         lastPictureWidth = bitmap.getWidth();

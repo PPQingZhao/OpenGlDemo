@@ -12,15 +12,27 @@ import android.util.AttributeSet;
  */
 
 public class PPGLSurfaceView extends GLSurfaceView {
+
+    private PPGLRenderer mGlRenderer;
+
     public PPGLSurfaceView(Context context) {
         this(context, null);
     }
 
     public PPGLSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    public void startRender() {
+        startRender(null);
+    }
+
+    public void startRender(PPGLRenderer.OnTextureListener onTextureListener) {
         //设置egl版本
         setEGLContextClientVersion(2);
-        //设置 渲染回调
-        setRenderer(new PPGLRenderer(context));
+        mGlRenderer = new PPGLRenderer(getContext());
+        mGlRenderer.setOnTextureListener(onTextureListener);
+        // 设置 渲染回调
+        setRenderer(mGlRenderer);
     }
 }
