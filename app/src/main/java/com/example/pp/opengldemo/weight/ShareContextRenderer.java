@@ -21,19 +21,23 @@ import javax.microedition.khronos.opengles.GL10;
 public class ShareContextRenderer implements GLSurfaceView.Renderer {
     private final Context mContext;
     private final GLTexture glTexture;
+    private final int fragmentShader;
+    private final int vertexShader;
     private int[] textureId;
 
-    public ShareContextRenderer(Context context) {
+    public ShareContextRenderer(Context context, int vertexShader, int fragmentShader) {
         this.mContext = context;
+        this.vertexShader = vertexShader;
+        this.fragmentShader = fragmentShader;
         glTexture = new GLTexture();
     }
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         //正交投影顶点shader
-        String codeVertex = StreamUtil.streamToSrting(mContext.getResources().openRawResource(R.raw.shader_vertx_m));
+        String codeVertex = StreamUtil.streamToSrting(mContext.getResources().openRawResource(vertexShader));
         //片源着色器
-        String codeFragment = StreamUtil.streamToSrting(mContext.getResources().openRawResource(R.raw.shader_fragment));
+        String codeFragment = StreamUtil.streamToSrting(mContext.getResources().openRawResource(fragmentShader));
         glTexture.init(codeVertex, codeFragment);
     }
 
