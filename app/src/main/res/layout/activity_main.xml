@@ -20,9 +20,35 @@
         android:id="@+id/main_glsurfaceview2"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_margin="1dp"
         android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="4:3"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/main_glsurfaceview3"
+        app:layout_constraintTop_toBottomOf="@id/main_glsurfaceview" />
+
+    <com.example.pp.opengldemo.weight.PPGLSurfaceView
+        android:id="@+id/main_glsurfaceview3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="1dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="4:3"
+        app:layout_constraintLeft_toRightOf="@id/main_glsurfaceview2"
+        app:layout_constraintRight_toLeftOf="@id/main_glsurfaceview4"
+        app:layout_constraintTop_toBottomOf="@id/main_glsurfaceview" />
+
+    <com.example.pp.opengldemo.weight.PPGLSurfaceView
+        android:id="@+id/main_glsurfaceview4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="1dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="4:3"
+        app:layout_constraintLeft_toRightOf="@id/main_glsurfaceview3"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/main_glsurfaceview" />
 

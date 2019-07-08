@@ -2,12 +2,10 @@ package com.example.pp.opengldemo.opengl;
 
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
-import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.util.Log;
 
 
-import androidx.annotation.CallSuper;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -88,7 +86,6 @@ public abstract class BaseTexture {
         windowHeight = height;
     }
 
-    @CallSuper
     public void init(String codeVertex, String codeFragment) {
         // 初始化渲染程序
         mGLProgram.init(codeVertex, codeFragment);

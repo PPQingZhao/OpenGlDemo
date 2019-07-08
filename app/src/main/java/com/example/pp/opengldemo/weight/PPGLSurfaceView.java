@@ -1,7 +1,6 @@
 package com.example.pp.opengldemo.weight;
 
 import android.content.Context;
-import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 
 /**
@@ -13,7 +12,7 @@ import android.util.AttributeSet;
 
 public class PPGLSurfaceView extends GLSurfaceView {
 
-    private PPGLRenderer mGlRenderer;
+    private GLSurfaceView.Renderer  mGlRenderer;
 
     public PPGLSurfaceView(Context context) {
         this(context, null);
@@ -23,15 +22,10 @@ public class PPGLSurfaceView extends GLSurfaceView {
         super(context, attrs);
     }
 
-    public void startRender() {
-        startRender(null);
-    }
-
-    public void startRender(PPGLRenderer.OnTextureListener onTextureListener) {
+    public void setRender(GLSurfaceView.Renderer render) {
         //设置egl版本
         setEGLContextClientVersion(2);
-        mGlRenderer = new PPGLRenderer(getContext());
-        mGlRenderer.setOnTextureListener(onTextureListener);
+        mGlRenderer = render;
         // 设置 渲染回调
         setRenderer(mGlRenderer);
     }
